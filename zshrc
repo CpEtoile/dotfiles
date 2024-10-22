@@ -146,7 +146,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
 
-alias opus="/home/chunpeng/projects/opus/opus-cli/dist/cli.js"
+alias opus='/Users/chunpeng/projects/opus/opus-cli/dist/cli.js'
 
 
 # place this after nvm initialization!
@@ -172,3 +172,53 @@ add-zsh-hook chpwd load-nvmrc
 
 
 eval "$(direnv hook zsh)"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/chunpeng/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/chunpeng/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/chunpeng/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/chunpeng/google-cloud-sdk/completion.zsh.inc'; fi
+
+# export PATH="/Users/chunpeng/miniconda3/bin:$PATH"  # commented out by conda initialize
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/chunpeng/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/chunpeng/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/chunpeng/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/chunpeng/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+
+export PATH="/Users/chunpeng/.local/bin:$PATH"
+
+# Press Ctrl+R to search through command history
+if [[ -n $BASH_VERSION ]]; then
+    bind '"\C-r": "fzf-history-widget"'
+elif [[ -n $ZSH_VERSION ]]; then
+    bindkey '^R' fzf-history-widget
+fi
+
+# If not already added by the fzf install script
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Define the fzf history search function
+fzf_history_search() {
+  local selected_command
+  selected_command=$(fc -rl 1 | fzf --tac +s --no-sort +m --height=40% --layout=reverse --prompt='History> ' | sed 's/^[ ]*[0-9]*[ ]*//')
+  LBUFFER=$selected_command
+}
+
+# Bind the function to Ctrl+R
+zle -N fzf_history_search
+bindkey '^R' fzf_history_search
+
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
